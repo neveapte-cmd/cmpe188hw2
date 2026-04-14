@@ -839,6 +839,80 @@
             "requirements": {
                 "validation": "AUC/AP reported with deterministic sampling."
             }
-        }
+        },
+        [
+  {
+    "series": "Neural Networks (MLP)",
+    "level": 5,
+    "id": "mlp_lvl5_wine_quality_tabular",
+    "algorithm": "MLP (Tabular Classification on Wine Dataset)",
+    "description": "Train a PyTorch MLP on a real tabular classification dataset with feature normalization, early stopping, and confusion-matrix reporting.",
+    "interface_protocol": "pytorch_task_v1",
+    "requirements": {
+      "data": "Use sklearn.datasets.load_wine. Perform train/validation split with stratification.",
+      "preprocessing": "Implement feature standardization manually in PyTorch-compatible form using training-set statistics only.",
+      "implementation": "Use torch.nn.Module with at least two Linear layers, ReLU activations, and optional dropout.",
+      "training": "Use Adam optimizer and CrossEntropyLoss. Add early stopping based on validation loss.",
+      "evaluation": "The evaluate() function must compute validation loss, accuracy, macro-F1, and confusion matrix on the VALIDATION split.",
+      "main_block": "The if __name__ == '__main__' block must train the model, evaluate on both train and validation splits, print all metrics clearly, save artifacts, and assert validation accuracy > 0.90 and macro-F1 > 0.90.",
+      "artifacts": "Save confusion matrix plot and loss curve plot.",
+      "output": "Return dict with loss_history, val_loss_history, best_epoch, final metrics."
+    }
+  },
+  {
+    "series": "Neural Networks (MLP)",
+    "level": 6,
+    "id": "mlp_lvl6_optimizer_comparison_moons",
+    "algorithm": "MLP (Optimizer Comparison on Two Moons)",
+    "description": "Compare two PyTorch optimizers on a nonlinear classification problem using the same MLP architecture and report which performs better.",
+    "interface_protocol": "pytorch_task_v1",
+    "requirements": {
+      "data": "Use sklearn.datasets.make_moons with noise. Split into 80% train / 20% validation.",
+      "implementation": "Build one shared MLP architecture in torch.nn.Module and train it twice: once with SGD+momentum and once with Adam.",
+      "training": "Use identical seeds and matching train/validation splits for a fair comparison.",
+      "evaluation": "The evaluate() function must compute validation loss, accuracy, precision, recall, and F1 score.",
+      "comparison": "Report final metrics for both optimizers and determine the better optimizer by validation F1, breaking ties with lower validation loss.",
+      "visualization": "Save decision boundary plot for the best model and a training-loss comparison plot for both optimizers.",
+      "main_block": "The if __name__ == '__main__' block must train both optimizer variants, print train/validation metrics for each, identify the best optimizer, and assert that the best model achieves validation accuracy > 0.90.",
+      "output": "Return dict containing metrics for both optimizers, selected_best_optimizer, and histories."
+    }
+  },
+  {
+    "series": "Neural Networks (MLP)",
+    "level": 7,
+    "id": "mlp_lvl7_regularization_ablation_digits",
+    "algorithm": "MLP (Regularization Ablation on Digits)",
+    "description": "Study the effect of dropout and weight decay on overfitting using a PyTorch MLP on the sklearn digits dataset.",
+    "interface_protocol": "pytorch_task_v1",
+    "requirements": {
+      "data": "Use sklearn.datasets.load_digits. Flatten images and split into train/validation sets with stratification.",
+      "implementation": "Train three variants of the same MLP: baseline, dropout-enabled, and weight-decay-enabled.",
+      "training": "Use Adam optimizer and CrossEntropyLoss for all runs. Keep epochs, batch size, and seed fixed across variants.",
+      "evaluation": "The evaluate() function must compute loss, accuracy, and macro-F1 on the VALIDATION split.",
+      "analysis": "Measure train-vs-validation generalization gap for each variant and report which regularization strategy reduces overfitting most effectively.",
+      "visualization": "Save one combined plot showing train and validation loss curves for all three variants.",
+      "main_block": "The if __name__ == '__main__' block must run all three experiments, print a comparison table of metrics, and assert that at least one regularized model achieves validation accuracy >= baseline accuracy.",
+      "output": "Return dict with per-variant histories, metrics, generalization gaps, and selected best regularized model."
+    }
+  },
+  {
+    "series": "Neural Networks (MLP)",
+    "level": 8,
+    "id": "mlp_lvl8_robustness_noise_test",
+    "algorithm": "MLP (Robustness to Noisy Features)",
+    "description": "Train a PyTorch MLP on a clean synthetic classification dataset, then evaluate robustness under added Gaussian feature noise at test time.",
+    "interface_protocol": "pytorch_task_v1",
+    "requirements": {
+      "data": "Generate a synthetic multiclass dataset using sklearn.datasets.make_classification with informative and redundant features. Create clean train/validation data.",
+      "implementation": "Use a torch.nn.Module MLP with ReLU activations and batch normalization.",
+      "training": "Train on clean data only using Adam optimizer and CrossEntropyLoss.",
+      "robustness_test": "During evaluation, test the trained model on the same validation inputs under multiple Gaussian noise levels (e.g., sigma = 0.0, 0.1, 0.25, 0.5).",
+      "evaluation": "The evaluate() function must compute loss and accuracy on the VALIDATION split for a specified noise level.",
+      "analysis": "Report how validation accuracy changes as noise increases and compute robustness_drop = accuracy_at_sigma_0 - accuracy_at_sigma_0_5.",
+      "visualization": "Save a plot of validation accuracy versus noise level.",
+      "main_block": "The if __name__ == '__main__' block must train once, evaluate across all required noise levels, print the robustness summary, and assert clean validation accuracy > 0.85 and robustness_drop < 0.35.",
+      "output": "Return dict with noise_levels, accuracy_by_noise, robustness_drop, and final clean metrics."
+    }
+  }
     ]
 }
